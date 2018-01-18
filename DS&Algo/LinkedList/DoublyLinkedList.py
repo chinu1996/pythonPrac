@@ -1,3 +1,7 @@
+# Error trying to access the empty container
+class Empty(Exception):
+    pass
+
 class _DoublyLinkedBase:
     """A basic class providing a doubly linked list representation"""
 
@@ -40,5 +44,34 @@ class _DoublyLinkedBase:
         element = node._element
         node._next = node._prev = node._element = None  #deprecate the node
         return element
+
+class LinkedDeque(_DoublyLinkedBase):                 # Note the use of inheritance
+    """Double-ended queue implementation"""
+    def first(self):
+        """Return but do not remove the element at the front of the deque"""
+        if self.is_empty():
+            raise Empty('Deque is empty')
+        return self._header._next._element
+    def last(self):
+        """Return but do not remove the last element of the deque"""
+        if self.is_empty():
+            raise Empty('Deque is empty')
+        return self._trailer._prev._element
+
+    def insert_first(self, e):
+        """Add an element at the front of the deque"""
+        #In the following line the first arg is the element itself, secong is the address of the the header and
+        #third is the ADDRESS stored in header for the next element which will become the successor
+        self._insert_between(e, self._header, self._header._next)
+
+    def delete_first(self):
+        if self.is_empty():
+            raise Empty('Deque is empty')
+        return self._delete_node(self._header._next)    #Use of inherited method
+
+    def delete_last(self):
+        if self.is_empty():
+            raise Empty('Deque is empty')
+        return self._delete_node(self._trailer._prev)   #Use of inherited method
 
 
