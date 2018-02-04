@@ -47,7 +47,16 @@ class FavoritesList:
         """access element e therby increasing its access counts"""
         p = self._find_position(e)
         if p is None:
-            self._data.delete(p)
+            p = self._data.add_last(self._item(e))
+        p.element()._count += 1
+        self._move_up(p)
+
+    def remove(self, e):
+        """Remove element e foem the list of favorites"""
+        p = self._find_position(e)              #find the position of the element
+        if p is not None:
+            self._data.delete(p)                #delete if found
+
 
     def top(self, k):
         """Generate a sequence of top k elements in terms of access count"""
@@ -58,3 +67,37 @@ class FavoritesList:
             item  = walk.element()
             yield item._value
             walk = self._data.after(walk)
+
+
+class FavoritesListMTF(FavoritesList):
+    """List of elements ordered with move-to-front heurisitc"""
+
+    #----override _move_up to provide move to front semantics
+    def _move_up(self, p):
+        """Move accessed item to the front of the list"""
+        if p != self._data.first():
+            self._data.add_first(self._data.delete(p))
+
+    # we override top as the list is no longer sorted
+    def top(self, k):
+        """Generate sequence of top k elements in terms of access counts"""
+        if not 1 <= k <= len(self):
+            raise ValueError("Illegal value of k")
+
+        # we begin by making a copy of the list
+        temp = PositionalList()
+        for item in self._data:
+            temp.add_last(item)
+
+        # we repeatedly find report and remove element with largest count
+        for j in range(k):
+            highPos = temp.first()
+            walk = temp.after(highPos)
+            while walk is not None:
+                if walk.element()._count > highPos.element()._count:
+                    highPos = walk
+                walk = temp.after(walk)
+            #we have found the element with the highest count
+            yield highPos.element()._value
+            temp.delete(highPos)
+            
