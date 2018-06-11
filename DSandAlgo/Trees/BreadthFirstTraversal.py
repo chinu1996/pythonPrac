@@ -1,3 +1,4 @@
+from DSandAlgo.LinkedList.Singlylinkedlist_queue import linkedqueue
 class Tree:
     """An abstract base class representing a tree structure"""
 
@@ -78,24 +79,20 @@ class Tree:
         for p in self.positions():
             yield p.element()
 
-    def preorder(self):
-        """Generate a preorder iteration of positions in the tree."""
+    def breadthfirst(self):
+        """Generate a breadth-first iteration of the positions of the tree"""
         if not self.is_empty():
-            for p in self._subtree_preorder(self.root()):
+            fringe = linkedqueue()
+            fringe.enqueue(self.root())
+            while not fringe.is_empty():
+                p = fringe.dequeue()
                 yield p
+                for c in self.children(p):
+                    fringe.enqueue(c)
+                    
 
-    def _subtree_preorder(self, p):
-        """Generate a preorder iteration of positions in subtree rooted at p"""
-        yield p                                             #visit p before its subtree
-        for c in self.children(p):                             #for each child
-            for other in self._subtree_preorder(c):         #do preorder of c's subtree
-                yield other                                 #yielding each to our caller
 
 
     def positions(self):
         """Generate an iteration of the tree's positions."""
-        return self.preorder()          #return the entire preorder iteration
-
-
-
-
+        return self.postorder()  # return the entire postorder iteration

@@ -78,24 +78,21 @@ class Tree:
         for p in self.positions():
             yield p.element()
 
-    def preorder(self):
-        """Generate a preorder iteration of positions in the tree."""
+    def postorder(self):
+        """Generate a postorder iteration of positions in the tree."""
         if not self.is_empty():
-            for p in self._subtree_preorder(self.root()):
+            for p in self._subtree_postorder(self.root()):      #start recursion
                 yield p
 
-    def _subtree_preorder(self, p):
-        """Generate a preorder iteration of positions in subtree rooted at p"""
-        yield p                                             #visit p before its subtree
-        for c in self.children(p):                             #for each child
-            for other in self._subtree_preorder(c):         #do preorder of c's subtree
-                yield other                                 #yielding each to our caller
+    def _subtree_postorder(self, p):
+        """Generate a postorder iteration of positions in subtree rooted at p"""
+        for c in self.children(p):                           #for each child in c
+            for other in self._subtree_postorder(c):        #do postorder of c's subtree
+                yield other                                 #yielding each to caller
+        yield p                                             #visit p after its subtrees
+
 
 
     def positions(self):
         """Generate an iteration of the tree's positions."""
-        return self.preorder()          #return the entire preorder iteration
-
-
-
-
+        return self.postorder()          #return the entire postorder iteration
