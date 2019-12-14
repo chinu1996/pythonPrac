@@ -1,4 +1,4 @@
-class   Car:
+class Car:
 
     wheels = 4
     # This is a class variable
