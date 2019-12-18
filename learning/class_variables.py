@@ -6,7 +6,7 @@ class Employee:
         self.first = first
         self.last = last
         self.pay = pay
-        self.fullname = self.first + self.last
+        self.fullname = self.first +  ' ' + self.last
 
     def promotion(self):
         new_pay =  (self.pay * self.raise_amount)
